@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class RequestInterviewService {
+class RequestSquareService {
   String collection = 'requestSquare';
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
