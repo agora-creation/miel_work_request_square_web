@@ -72,7 +72,6 @@ class _Step1ScreenState extends State<Step1Screen> {
               ResponsiveBox(
                 children: [
                   const Text('以下のフォームにご入力いただき、申込を行なってください。'),
-                  const SizedBox(height: 8),
                   const SizedBox(height: 16),
                   const DottedDivider(),
                   const SizedBox(height: 16),

@@ -76,7 +76,6 @@ class _Step2ScreenState extends State<Step2Screen> {
               ResponsiveBox(
                 children: [
                   const Text('以下の申込内容で問題ないかご確認ください。'),
-                  const SizedBox(height: 8),
                   const SizedBox(height: 16),
                   const DottedDivider(),
                   const SizedBox(height: 16),
