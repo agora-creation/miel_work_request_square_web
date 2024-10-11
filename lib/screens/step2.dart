@@ -18,16 +18,17 @@ class Step2Screen extends StatefulWidget {
   final String companyUserEmail;
   final String companyUserTel;
   final String companyAddress;
-  final String useName;
-  final String useUserName;
-  final String useUserTel;
-  final String usePeriod;
-  final String useTimezone;
+  final String useCompanyName;
+  final String useCompanyUserName;
+  final DateTime useStartedAt;
+  final DateTime useEndedAt;
+  final bool useAtPending;
   final bool useFull;
   final bool useChair;
+  final int useChairNum;
   final bool useDesk;
+  final int useDeskNum;
   final String useContent;
-  final String remarks;
 
   const Step2Screen({
     required this.companyName,
@@ -35,16 +36,17 @@ class Step2Screen extends StatefulWidget {
     required this.companyUserEmail,
     required this.companyUserTel,
     required this.companyAddress,
-    required this.useName,
-    required this.useUserName,
-    required this.useUserTel,
-    required this.usePeriod,
-    required this.useTimezone,
+    required this.useCompanyName,
+    required this.useCompanyUserName,
+    required this.useStartedAt,
+    required this.useEndedAt,
+    required this.useAtPending,
     required this.useFull,
     required this.useChair,
+    required this.useChairNum,
     required this.useDesk,
+    required this.useDeskNum,
     required this.useContent,
-    required this.remarks,
     super.key,
   });
 
@@ -75,6 +77,18 @@ class _Step2ScreenState extends State<Step2Screen> {
                 children: [
                   const Text('以下の申込内容で問題ないかご確認ください。'),
                   const SizedBox(height: 8),
+                  const SizedBox(height: 16),
+                  const DottedDivider(),
+                  const SizedBox(height: 16),
+                  const Text(
+                    '申込者情報',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'SourceHanSansJP-Bold',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   FormLabel(
                     '申込会社名(又は店名)',
                     child: FormValue(widget.companyName),
@@ -99,13 +113,13 @@ class _Step2ScreenState extends State<Step2Screen> {
                     '住所',
                     child: FormValue(widget.companyAddress),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   const DottedDivider(),
                   const SizedBox(height: 16),
                   const Text(
-                    '使用者情報 (上記と異なる場合のみ入力)',
+                    '使用者情報 (申込者情報と異なる場合のみ)',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'SourceHanSansJP-Bold',
                     ),
@@ -113,38 +127,32 @@ class _Step2ScreenState extends State<Step2Screen> {
                   const SizedBox(height: 8),
                   FormLabel(
                     '使用会社名(又は店名)',
-                    child: FormValue(widget.useName),
+                    child: FormValue(widget.useCompanyName),
                   ),
                   const SizedBox(height: 8),
                   FormLabel(
-                    '使用担当者名',
-                    child: FormValue(widget.useUserName),
+                    '使用者名',
+                    child: FormValue(widget.useCompanyUserName),
                   ),
-                  const SizedBox(height: 8),
-                  FormLabel(
-                    '使用担当者電話番号',
-                    child: FormValue(widget.useUserTel),
-                  ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   const DottedDivider(),
                   const SizedBox(height: 16),
                   const Text(
                     '使用情報',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'SourceHanSansJP-Bold',
                     ),
                   ),
                   const SizedBox(height: 8),
                   FormLabel(
-                    '使用期間',
-                    child: FormValue(widget.usePeriod),
-                  ),
-                  const SizedBox(height: 8),
-                  FormLabel(
-                    '使用時間帯',
-                    child: FormValue(widget.useTimezone),
+                    '使用予定日時',
+                    child: FormValue(
+                      widget.useAtPending
+                          ? '未定'
+                          : '${dateText('yyyy年MM月dd日 HH:mm', widget.useStartedAt)}〜${dateText('yyyy年MM月dd日 HH:mm', widget.useEndedAt)}',
+                    ),
                   ),
                   const SizedBox(height: 8),
                   FormLabel(
@@ -159,13 +167,13 @@ class _Step2ScreenState extends State<Step2Screen> {
                         widget.useChair
                             ? const ListTile(
                                 title: Text('折りたたみイス'),
-                                subtitle: Text('150円税抜／1脚／1日'),
+                                subtitle: Text('150円(税抜)／1脚・1日'),
                               )
                             : Container(),
                         widget.useDesk
                             ? const ListTile(
                                 title: Text('折りたたみ机'),
-                                subtitle: Text('300円税抜／1脚／1日'),
+                                subtitle: Text('300円(税抜)／1脚・1日'),
                               )
                             : Container(),
                       ],
@@ -175,13 +183,6 @@ class _Step2ScreenState extends State<Step2Screen> {
                   FormLabel(
                     '使用内容',
                     child: FormValue(widget.useContent),
-                  ),
-                  const SizedBox(height: 24),
-                  const DottedDivider(),
-                  const SizedBox(height: 16),
-                  FormLabel(
-                    'その他連絡事項',
-                    child: FormValue(widget.remarks),
                   ),
                   const SizedBox(height: 16),
                   const DottedDivider(),
@@ -198,16 +199,17 @@ class _Step2ScreenState extends State<Step2Screen> {
                         companyUserEmail: widget.companyUserEmail,
                         companyUserTel: widget.companyUserTel,
                         companyAddress: widget.companyAddress,
-                        useName: widget.useName,
-                        useUserName: widget.useUserName,
-                        useUserTel: widget.useUserTel,
-                        usePeriod: widget.usePeriod,
-                        useTimezone: widget.useTimezone,
+                        useCompanyName: widget.useCompanyName,
+                        useCompanyUserName: widget.useCompanyUserName,
+                        useStartedAt: widget.useStartedAt,
+                        useEndedAt: widget.useEndedAt,
+                        useAtPending: widget.useAtPending,
                         useFull: widget.useFull,
                         useChair: widget.useChair,
+                        useChairNum: widget.useChairNum,
                         useDesk: widget.useDesk,
+                        useDeskNum: widget.useDeskNum,
                         useContent: widget.useContent,
-                        remarks: widget.remarks,
                       );
                       if (error != null) {
                         if (!mounted) return;

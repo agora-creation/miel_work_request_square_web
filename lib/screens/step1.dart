@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:miel_work_request_square_web/common/custom_date_time_picker.dart';
 import 'package:miel_work_request_square_web/common/style.dart';
 import 'package:miel_work_request_square_web/screens/step2.dart';
 import 'package:miel_work_request_square_web/widgets/custom_button.dart';
+import 'package:miel_work_request_square_web/widgets/custom_checkbox.dart';
 import 'package:miel_work_request_square_web/widgets/custom_text_field.dart';
+import 'package:miel_work_request_square_web/widgets/datetime_range_form.dart';
 import 'package:miel_work_request_square_web/widgets/dotted_divider.dart';
 import 'package:miel_work_request_square_web/widgets/form_label.dart';
 import 'package:miel_work_request_square_web/widgets/responsive_box.dart';
@@ -21,16 +24,33 @@ class _Step1ScreenState extends State<Step1Screen> {
   TextEditingController companyUserEmail = TextEditingController();
   TextEditingController companyUserTel = TextEditingController();
   TextEditingController companyAddress = TextEditingController();
-  TextEditingController useName = TextEditingController();
-  TextEditingController useUserName = TextEditingController();
-  TextEditingController useUserTel = TextEditingController();
-  TextEditingController usePeriod = TextEditingController();
-  TextEditingController useTimezone = TextEditingController();
+  TextEditingController useCompanyName = TextEditingController();
+  TextEditingController useCompanyUserName = TextEditingController();
+  DateTime useStartedAt = DateTime.now();
+  DateTime useEndedAt = DateTime.now();
+  bool useAtPending = false;
   bool useFull = false;
   bool useChair = false;
+  TextEditingController useChairNum = TextEditingController(text: '0');
   bool useDesk = false;
+  TextEditingController useDeskNum = TextEditingController(text: '0');
   TextEditingController useContent = TextEditingController();
-  TextEditingController remarks = TextEditingController();
+
+  @override
+  void initState() {
+    useStartedAt = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+      10,
+      0,
+      0,
+    );
+    useEndedAt = useStartedAt.add(
+      const Duration(hours: 2),
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +72,18 @@ class _Step1ScreenState extends State<Step1Screen> {
               ResponsiveBox(
                 children: [
                   const Text('以下のフォームにご入力いただき、申込を行なってください。'),
+                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
+                  const DottedDivider(),
+                  const SizedBox(height: 16),
+                  const Text(
+                    '申込者情報',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'SourceHanSansJP-Bold',
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   FormLabel(
                     '申込会社名(又は店名)',
@@ -106,16 +138,15 @@ class _Step1ScreenState extends State<Step1Screen> {
                       controller: companyAddress,
                       textInputType: TextInputType.text,
                       maxLines: 1,
-                      hintText: '例）高知市はりまや町1丁目ABCビル',
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   const DottedDivider(),
                   const SizedBox(height: 16),
                   const Text(
-                    '使用者情報 (上記と異なる場合のみ入力)',
+                    '使用者情報 (申込者情報と異なる場合のみ)',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'SourceHanSansJP-Bold',
                     ),
@@ -124,61 +155,67 @@ class _Step1ScreenState extends State<Step1Screen> {
                   FormLabel(
                     '使用会社名(又は店名)',
                     child: CustomTextField(
-                      controller: useName,
+                      controller: useCompanyName,
                       textInputType: TextInputType.text,
                       maxLines: 1,
-                      hintText: '例）ひろめカンパニー',
+                      hintText: '例）明神水産',
                     ),
                   ),
                   const SizedBox(height: 8),
                   FormLabel(
-                    '使用担当者名',
+                    '使用者名',
                     child: CustomTextField(
-                      controller: useUserName,
+                      controller: useCompanyUserName,
                       textInputType: TextInputType.text,
                       maxLines: 1,
-                      hintText: '例）田中太郎',
+                      hintText: '例）田中二郎',
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  FormLabel(
-                    '使用担当者電話番号',
-                    child: CustomTextField(
-                      controller: useUserTel,
-                      textInputType: TextInputType.text,
-                      maxLines: 1,
-                      hintText: '例）090-0000-0000',
-                    ),
-                  ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   const DottedDivider(),
                   const SizedBox(height: 16),
                   const Text(
                     '使用情報',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'SourceHanSansJP-Bold',
                     ),
                   ),
                   const SizedBox(height: 8),
                   FormLabel(
-                    '使用期間',
-                    child: CustomTextField(
-                      controller: usePeriod,
-                      textInputType: TextInputType.text,
-                      maxLines: 1,
-                      hintText: '例）令和元年9月20日〜9月27日',
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  FormLabel(
-                    '使用時間帯',
-                    child: CustomTextField(
-                      controller: useTimezone,
-                      textInputType: TextInputType.text,
-                      maxLines: 1,
-                      hintText: '例）10:00〜16:00',
+                    '使用予定日時',
+                    child: DatetimeRangeForm(
+                      startedAt: useStartedAt,
+                      startedOnTap: () async =>
+                          await CustomDateTimePicker().picker(
+                        context: context,
+                        init: useStartedAt,
+                        title: '使用予定開始日時を選択',
+                        onChanged: (value) {
+                          setState(() {
+                            useStartedAt = value;
+                          });
+                        },
+                      ),
+                      endedAt: useEndedAt,
+                      endedOnTap: () async =>
+                          await CustomDateTimePicker().picker(
+                        context: context,
+                        init: useEndedAt,
+                        title: '使用予定終了日時を選択',
+                        onChanged: (value) {
+                          setState(() {
+                            useEndedAt = value;
+                          });
+                        },
+                      ),
+                      pending: useAtPending,
+                      pendingOnChanged: (value) {
+                        setState(() {
+                          useAtPending = value ?? false;
+                        });
+                      },
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -186,58 +223,34 @@ class _Step1ScreenState extends State<Step1Screen> {
                     '使用区分',
                     child: Column(
                       children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: kDisabledColor),
-                            ),
-                          ),
-                          child: CheckboxListTile(
-                            title: const Text('全面使用'),
-                            value: useFull,
-                            onChanged: (value) {
-                              setState(() {
-                                useFull = value ?? false;
-                              });
-                            },
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
+                        CustomCheckbox(
+                          label: '全面使用',
+                          value: useFull,
+                          onChanged: (value) {
+                            setState(() {
+                              useFull = value ?? false;
+                            });
+                          },
                         ),
-                        Container(
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: kDisabledColor),
-                            ),
-                          ),
-                          child: CheckboxListTile(
-                            title: const Text('折りたたみイス'),
-                            subtitle: const Text('150円税抜／1脚／1日'),
-                            value: useChair,
-                            onChanged: (value) {
-                              setState(() {
-                                useChair = value ?? false;
-                              });
-                            },
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
+                        CustomCheckbox(
+                          label: '折りたたみイス',
+                          subLabel: '150円(税抜)／1脚・1日',
+                          value: useChair,
+                          onChanged: (value) {
+                            setState(() {
+                              useChair = value ?? false;
+                            });
+                          },
                         ),
-                        Container(
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: kDisabledColor),
-                            ),
-                          ),
-                          child: CheckboxListTile(
-                            title: const Text('折りたたみ机'),
-                            subtitle: const Text('300円税抜／1脚／1日'),
-                            value: useDesk,
-                            onChanged: (value) {
-                              setState(() {
-                                useDesk = value ?? false;
-                              });
-                            },
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
+                        CustomCheckbox(
+                          label: '折りたたみ机',
+                          subLabel: '300円(税抜)／1脚・1日',
+                          value: useDesk,
+                          onChanged: (value) {
+                            setState(() {
+                              useDesk = value ?? false;
+                            });
+                          },
                         ),
                       ],
                     ),
@@ -248,19 +261,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                     child: CustomTextField(
                       controller: useContent,
                       textInputType: TextInputType.multiline,
-                      maxLines: null,
-                      hintText: '例）よさこい祭りのため、屋台を出店したい',
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const DottedDivider(),
-                  const SizedBox(height: 16),
-                  FormLabel(
-                    'その他連絡事項',
-                    child: CustomTextField(
-                      controller: remarks,
-                      textInputType: TextInputType.multiline,
-                      maxLines: null,
+                      maxLines: 5,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -282,16 +283,17 @@ class _Step1ScreenState extends State<Step1Screen> {
                             companyUserEmail: companyUserEmail.text,
                             companyUserTel: companyUserTel.text,
                             companyAddress: companyAddress.text,
-                            useName: useName.text,
-                            useUserName: useUserName.text,
-                            useUserTel: useUserTel.text,
-                            usePeriod: usePeriod.text,
-                            useTimezone: useTimezone.text,
+                            useCompanyName: useCompanyName.text,
+                            useCompanyUserName: useCompanyUserName.text,
+                            useStartedAt: useStartedAt,
+                            useEndedAt: useEndedAt,
+                            useAtPending: useAtPending,
                             useFull: useFull,
                             useChair: useChair,
+                            useChairNum: int.parse(useChairNum.text),
                             useDesk: useDesk,
+                            useDeskNum: int.parse(useDeskNum.text),
                             useContent: useContent.text,
-                            remarks: remarks.text,
                           ),
                         ),
                       );
