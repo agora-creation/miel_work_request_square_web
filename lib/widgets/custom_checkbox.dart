@@ -6,12 +6,14 @@ class CustomCheckbox extends StatelessWidget {
   final String? subLabel;
   final bool value;
   final Function(bool?)? onChanged;
+  final Widget child;
 
   const CustomCheckbox({
     required this.label,
     this.subLabel,
     required this.value,
     required this.onChanged,
+    required this.child,
     super.key,
   });
 
@@ -23,12 +25,22 @@ class CustomCheckbox extends StatelessWidget {
           bottom: BorderSide(color: kDisabledColor),
         ),
       ),
-      child: CheckboxListTile(
-        title: Text(label),
-        subtitle: subLabel != null ? Text(subLabel!) : null,
-        value: value,
-        onChanged: onChanged,
-        controlAffinity: ListTileControlAffinity.leading,
+      child: Row(
+        children: [
+          Expanded(
+            child: CheckboxListTile(
+              title: Text(label),
+              subtitle: subLabel != null ? Text(subLabel!) : null,
+              value: value,
+              onChanged: onChanged,
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
+          ),
+          SizedBox(
+            width: 100,
+            child: child,
+          ),
+        ],
       ),
     );
   }

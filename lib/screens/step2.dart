@@ -164,15 +164,15 @@ class _Step2ScreenState extends State<Step2Screen> {
                               )
                             : Container(),
                         widget.useChair
-                            ? const ListTile(
-                                title: Text('折りたたみイス'),
-                                subtitle: Text('150円(税抜)／1脚・1日'),
+                            ? ListTile(
+                                title: Text('折りたたみイス：${widget.useChairNum}脚'),
+                                subtitle: const Text('150円(税抜)／1脚・1日'),
                               )
                             : Container(),
                         widget.useDesk
-                            ? const ListTile(
-                                title: Text('折りたたみ机'),
-                                subtitle: Text('300円(税抜)／1脚・1日'),
+                            ? ListTile(
+                                title: Text('折りたたみ机：${widget.useDeskNum}台'),
+                                subtitle: const Text('300円(税抜)／1台・1日'),
                               )
                             : Container(),
                       ],

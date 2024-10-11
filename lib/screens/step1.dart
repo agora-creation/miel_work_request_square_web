@@ -230,6 +230,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                               useFull = value ?? false;
                             });
                           },
+                          child: Container(),
                         ),
                         CustomCheckbox(
                           label: '折りたたみイス',
@@ -240,16 +241,30 @@ class _Step1ScreenState extends State<Step1Screen> {
                               useChair = value ?? false;
                             });
                           },
+                          child: CustomTextField(
+                            label: '脚数',
+                            controller: useChairNum,
+                            textInputType: TextInputType.text,
+                            maxLines: 1,
+                            enabled: useChair,
+                          ),
                         ),
                         CustomCheckbox(
                           label: '折りたたみ机',
-                          subLabel: '300円(税抜)／1脚・1日',
+                          subLabel: '300円(税抜)／1台・1日',
                           value: useDesk,
                           onChanged: (value) {
                             setState(() {
                               useDesk = value ?? false;
                             });
                           },
+                          child: CustomTextField(
+                            label: '台数',
+                            controller: useDeskNum,
+                            textInputType: TextInputType.text,
+                            maxLines: 1,
+                            enabled: useDesk,
+                          ),
                         ),
                       ],
                     ),
