@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:miel_work_request_square_web/common/custom_date_time_picker.dart';
+import 'package:miel_work_request_square_web/common/functions.dart';
 import 'package:miel_work_request_square_web/common/style.dart';
+import 'package:miel_work_request_square_web/providers/request_square.dart';
 import 'package:miel_work_request_square_web/screens/step2.dart';
 import 'package:miel_work_request_square_web/widgets/custom_button.dart';
 import 'package:miel_work_request_square_web/widgets/custom_checkbox.dart';
@@ -10,6 +12,7 @@ import 'package:miel_work_request_square_web/widgets/dotted_divider.dart';
 import 'package:miel_work_request_square_web/widgets/form_label.dart';
 import 'package:miel_work_request_square_web/widgets/responsive_box.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 
 class Step1Screen extends StatefulWidget {
   const Step1Screen({super.key});
@@ -54,6 +57,7 @@ class _Step1ScreenState extends State<Step1Screen> {
 
   @override
   Widget build(BuildContext context) {
+    final squareProvider = Provider.of<RequestSquareProvider>(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Center(
@@ -86,6 +90,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                   const SizedBox(height: 8),
                   FormLabel(
                     '申込会社名(又は店名)',
+                    required: true,
                     child: CustomTextField(
                       controller: companyName,
                       textInputType: TextInputType.text,
@@ -96,6 +101,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                   const SizedBox(height: 8),
                   FormLabel(
                     '申込担当者名',
+                    required: true,
                     child: CustomTextField(
                       controller: companyUserName,
                       textInputType: TextInputType.text,
@@ -106,6 +112,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                   const SizedBox(height: 8),
                   FormLabel(
                     '申込担当者メールアドレス',
+                    required: true,
                     child: CustomTextField(
                       controller: companyUserEmail,
                       textInputType: TextInputType.text,
@@ -123,6 +130,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                   const SizedBox(height: 8),
                   FormLabel(
                     '申込担当者電話番号',
+                    required: true,
                     child: CustomTextField(
                       controller: companyUserTel,
                       textInputType: TextInputType.text,
@@ -133,6 +141,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                   const SizedBox(height: 8),
                   FormLabel(
                     '住所',
+                    required: true,
                     child: CustomTextField(
                       controller: companyAddress,
                       textInputType: TextInputType.text,
@@ -287,6 +296,19 @@ class _Step1ScreenState extends State<Step1Screen> {
                     labelColor: kWhiteColor,
                     backgroundColor: kBlueColor,
                     onPressed: () async {
+                      String? error = await squareProvider.check(
+                        companyName: companyName.text,
+                        companyUserName: companyUserName.text,
+                        companyUserEmail: companyUserEmail.text,
+                        companyUserTel: companyUserTel.text,
+                        companyAddress: companyAddress.text,
+                      );
+                      if (error != null) {
+                        if (!mounted) return;
+                        showMessage(context, error, false);
+                        return;
+                      }
+                      if (!mounted) return;
                       Navigator.push(
                         context,
                         PageTransition(
