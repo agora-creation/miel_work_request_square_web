@@ -1,4 +1,6 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as storage;
 import 'package:flutter/material.dart';
 import 'package:miel_work_request_square_web/common/functions.dart';
 import 'package:miel_work_request_square_web/models/user.dart';
@@ -6,6 +8,7 @@ import 'package:miel_work_request_square_web/services/fm.dart';
 import 'package:miel_work_request_square_web/services/mail.dart';
 import 'package:miel_work_request_square_web/services/request_square.dart';
 import 'package:miel_work_request_square_web/services/user.dart';
+import 'package:path/path.dart' as p;
 
 class RequestSquareProvider with ChangeNotifier {
   final RequestSquareService _squareService = RequestSquareService();
@@ -46,6 +49,7 @@ class RequestSquareProvider with ChangeNotifier {
     required bool useDesk,
     required int useDeskNum,
     required String useContent,
+    required List<PlatformFile> pickedAttachedFiles,
   }) async {
     String? error;
     if (companyName == '') return '申込会社名(又は店名)は必須入力です';
@@ -54,8 +58,24 @@ class RequestSquareProvider with ChangeNotifier {
     if (companyUserTel == '') return '申込担当者電話番号は必須入力です';
     if (companyAddress == '') return '住所は必須入力です';
     try {
-      await FirebaseAuth.instance.signInAnonymously().then((value) {
+      await FirebaseAuth.instance.signInAnonymously().then((value) async {
         String id = _squareService.id();
+        List<String> attachedFiles = [];
+        if (pickedAttachedFiles.isNotEmpty) {
+          int i = 0;
+          for (final file in pickedAttachedFiles) {
+            String ext = p.extension(file.name);
+            storage.UploadTask uploadTask;
+            storage.Reference ref = storage.FirebaseStorage.instance
+                .ref()
+                .child('requestInterview')
+                .child('/${id}_$i$ext');
+            uploadTask = ref.putData(file.bytes!);
+            await uploadTask.whenComplete(() => null);
+            String url = await ref.getDownloadURL();
+            attachedFiles.add(url);
+          }
+        }
         _squareService.create({
           'id': id,
           'companyName': companyName,
@@ -74,6 +94,7 @@ class RequestSquareProvider with ChangeNotifier {
           'useDesk': useDesk,
           'useDeskNum': useDeskNum,
           'useContent': useContent,
+          'attachedFiles': attachedFiles,
           'approval': 0,
           'approvedAt': DateTime.now(),
           'approvalUsers': [],
