@@ -124,7 +124,8 @@ class _Step1ScreenState extends State<Step1Screen> {
                     '※このメールアドレス宛に、返答させていただきます',
                     style: TextStyle(
                       color: kRedColor,
-                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'SourceHanSansJP-Bold',
                     ),
                   ),
                   const SizedBox(height: 8),
