@@ -1,13 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:miel_work_request_square_web/common/functions.dart';
 import 'package:miel_work_request_square_web/models/user.dart';
 import 'package:miel_work_request_square_web/services/fm.dart';
+import 'package:miel_work_request_square_web/services/mail.dart';
 import 'package:miel_work_request_square_web/services/request_square.dart';
 import 'package:miel_work_request_square_web/services/user.dart';
 
 class RequestSquareProvider with ChangeNotifier {
   final RequestSquareService _squareService = RequestSquareService();
   final UserService _userService = UserService();
+  final MailService _mailService = MailService();
   final FmService _fmService = FmService();
 
   Future<String?> check({
@@ -76,6 +79,63 @@ class RequestSquareProvider with ChangeNotifier {
           'approvalUsers': [],
           'createdAt': DateTime.now(),
         });
+      });
+      String useAtText = '';
+      if (useAtPending) {
+        useAtText = '未定';
+      } else {
+        useAtText =
+            '${dateText('yyyy/MM/dd HH:mm', useStartedAt)}〜${dateText('yyyy/MM/dd HH:mm', useEndedAt)}';
+      }
+      String useClassText = '';
+      if (useFull) {
+        useClassText = '''
+全面使用
+        ''';
+      }
+      if (useChair) {
+        useClassText = '''
+折りたたみイス：$useChairNum脚
+        ''';
+      }
+      if (useDesk) {
+        useClassText = '''
+折りたたみ机：$useDeskNum台
+        ''';
+      }
+      String message = '''
+★★★このメールは自動返信メールです★★★
+
+よさこい広場使用申込が完了いたしました。
+以下申込内容を確認し、ご返信させていただきますので今暫くお待ちください。
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+■申込者情報
+【申込会社名(又は店名)】$companyName
+【申込担当者名】$companyUserName
+【申込担当者メールアドレス】$companyUserEmail
+【申込担当者電話番号】$companyUserTel
+【住所】$companyAddress
+
+■使用者情報 (申込者情報と異なる場合のみ)
+【使用会社名(又は店名)】$useCompanyName
+【使用者名】$useCompanyUserName
+
+■使用情報
+【使用予定日時】$useAtText
+【使用区分】
+$useClassText
+【使用内容】
+$useContent
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      ''';
+      _mailService.create({
+        'id': _mailService.id(),
+        'to': companyUserEmail,
+        'subject': '【自動送信】よさこい広場使用申込完了のお知らせ',
+        'message': message,
+        'createdAt': DateTime.now(),
+        'expirationAt': DateTime.now().add(const Duration(hours: 1)),
       });
       //通知
       List<UserModel> sendUsers = [];
