@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:miel_work_request_square_web/common/custom_date_time_picker.dart';
 import 'package:miel_work_request_square_web/common/functions.dart';
 import 'package:miel_work_request_square_web/common/style.dart';
+import 'package:miel_work_request_square_web/models/request_square.dart';
 import 'package:miel_work_request_square_web/providers/request_square.dart';
 import 'package:miel_work_request_square_web/screens/step2.dart';
+import 'package:miel_work_request_square_web/services/request_square.dart';
 import 'package:miel_work_request_square_web/widgets/attached_file_list.dart';
 import 'package:miel_work_request_square_web/widgets/custom_button.dart';
 import 'package:miel_work_request_square_web/widgets/custom_checkbox.dart';
@@ -25,6 +27,7 @@ class Step1Screen extends StatefulWidget {
 }
 
 class _Step1ScreenState extends State<Step1Screen> {
+  RequestSquareService squareService = RequestSquareService();
   TextEditingController companyName = TextEditingController();
   TextEditingController companyUserName = TextEditingController();
   TextEditingController companyUserEmail = TextEditingController();
@@ -43,6 +46,30 @@ class _Step1ScreenState extends State<Step1Screen> {
   TextEditingController useContent = TextEditingController();
   List<PlatformFile> pickedAttachedFiles = [];
 
+  void _getPrm() async {
+    String? id = Uri.base.queryParameters['id'];
+    if (id == null) return;
+    RequestSquareModel? square = await squareService.selectData(id);
+    if (square == null) return;
+    companyName.text = square.companyName;
+    companyUserName.text = square.companyUserName;
+    companyUserEmail.text = square.companyUserEmail;
+    companyUserTel.text = square.companyUserTel;
+    companyAddress.text = square.companyAddress;
+    useCompanyName.text = square.useCompanyName;
+    useCompanyUserName.text = square.useCompanyUserName;
+    useStartedAt = square.useStartedAt;
+    useEndedAt = square.useEndedAt;
+    useAtPending = square.useAtPending;
+    useFull = square.useFull;
+    useChair = square.useChair;
+    useChairNum.text = square.useChairNum.toString();
+    useDesk = square.useDesk;
+    useDeskNum.text = square.useDeskNum.toString();
+    useContent.text = square.useContent;
+    setState(() {});
+  }
+
   @override
   void initState() {
     useStartedAt = DateTime(
@@ -56,6 +83,7 @@ class _Step1ScreenState extends State<Step1Screen> {
     useEndedAt = useStartedAt.add(
       const Duration(hours: 2),
     );
+    _getPrm();
     super.initState();
   }
 
