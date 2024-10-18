@@ -100,31 +100,36 @@ class RequestSquareProvider with ChangeNotifier {
           'approvalUsers': [],
           'createdAt': DateTime.now(),
         });
-      });
-      String useAtText = '';
-      if (useAtPending) {
-        useAtText = '未定';
-      } else {
-        useAtText =
-            '${dateText('yyyy/MM/dd HH:mm', useStartedAt)}〜${dateText('yyyy/MM/dd HH:mm', useEndedAt)}';
-      }
-      String useClassText = '';
-      if (useFull) {
-        useClassText = '''
+        String useAtText = '';
+        if (useAtPending) {
+          useAtText = '未定';
+        } else {
+          useAtText =
+              '${dateText('yyyy/MM/dd HH:mm', useStartedAt)}〜${dateText('yyyy/MM/dd HH:mm', useEndedAt)}';
+        }
+        String useClassText = '';
+        if (useFull) {
+          useClassText = '''
 全面使用
         ''';
-      }
-      if (useChair) {
-        useClassText = '''
+        }
+        if (useChair) {
+          useClassText = '''
 折りたたみイス：$useChairNum脚
         ''';
-      }
-      if (useDesk) {
-        useClassText = '''
+        }
+        if (useDesk) {
+          useClassText = '''
 折りたたみ机：$useDeskNum台
         ''';
-      }
-      String message = '''
+        }
+        String attachedFilesText = '';
+        if (attachedFiles.isNotEmpty) {
+          for (final file in attachedFiles) {
+            attachedFilesText += '$file\n';
+          }
+        }
+        String message = '''
 ★★★このメールは自動返信メールです★★★
 
 よさこい広場使用申込が完了いたしました。
@@ -147,16 +152,19 @@ class RequestSquareProvider with ChangeNotifier {
 $useClassText
 【使用内容】
 $useContent
+【添付ファイル】
+$attachedFilesText
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       ''';
-      _mailService.create({
-        'id': _mailService.id(),
-        'to': companyUserEmail,
-        'subject': '【自動送信】よさこい広場使用申込完了のお知らせ',
-        'message': message,
-        'createdAt': DateTime.now(),
-        'expirationAt': DateTime.now().add(const Duration(hours: 1)),
+        _mailService.create({
+          'id': _mailService.id(),
+          'to': companyUserEmail,
+          'subject': '【自動送信】よさこい広場使用申込完了のお知らせ',
+          'message': message,
+          'createdAt': DateTime.now(),
+          'expirationAt': DateTime.now().add(const Duration(hours: 1)),
+        });
       });
       //通知
       List<UserModel> sendUsers = [];
