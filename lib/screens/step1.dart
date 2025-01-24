@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:miel_work_request_square_web/common/custom_date_time_picker.dart';
 import 'package:miel_work_request_square_web/common/functions.dart';
 import 'package:miel_work_request_square_web/common/style.dart';
@@ -14,6 +15,7 @@ import 'package:miel_work_request_square_web/widgets/custom_text_field.dart';
 import 'package:miel_work_request_square_web/widgets/datetime_range_form.dart';
 import 'package:miel_work_request_square_web/widgets/dotted_divider.dart';
 import 'package:miel_work_request_square_web/widgets/form_label.dart';
+import 'package:miel_work_request_square_web/widgets/link_text.dart';
 import 'package:miel_work_request_square_web/widgets/responsive_box.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path/path.dart' as p;
@@ -223,6 +225,20 @@ class _Step1ScreenState extends State<Step1Screen> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'SourceHanSansJP-Bold',
                     ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    '↓からダウンロードできるPDFファイルに、使用したい部分を描き加えて、以下からアップロードしてください。',
+                  ),
+                  LinkText(
+                    label: '広場の図PDFファイル',
+                    color: kBlueColor,
+                    onTap: () async {
+                      final data =
+                          await rootBundle.load('assets/pdf/template.pdf');
+                      final pdfData = data.buffer.asUint8List();
+                      downloadFile('template.pdf', pdfData);
+                    },
                   ),
                   const SizedBox(height: 8),
                   FormLabel(

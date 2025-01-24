@@ -1,3 +1,6 @@
+import 'dart:html' as html;
+import 'dart:typed_data';
+
 import 'package:alert_banner/exports.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -174,4 +177,14 @@ DateTime rebuildTime(BuildContext context, DateTime? date, String? time) {
     ret = DateTime.parse('$tmpDate $tmpTime');
   }
   return ret;
+}
+
+void downloadFile(String fileName, Uint8List fileData) {
+  final blob = html.Blob([fileData]);
+  final url = html.Url.createObjectUrlFromBlob(blob);
+  final anchor = html.AnchorElement(href: url)
+    ..target = 'blank'
+    ..download = fileName
+    ..click();
+  html.Url.revokeObjectUrl(url);
 }
