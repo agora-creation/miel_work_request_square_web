@@ -23,6 +23,7 @@ class Step2Screen extends StatefulWidget {
   final String companyAddress;
   final String useCompanyName;
   final String useCompanyUserName;
+  final PlatformFile? pickedUseLocationFile;
   final DateTime useStartedAt;
   final DateTime useEndedAt;
   final bool useAtPending;
@@ -42,6 +43,7 @@ class Step2Screen extends StatefulWidget {
     required this.companyAddress,
     required this.useCompanyName,
     required this.useCompanyUserName,
+    required this.pickedUseLocationFile,
     required this.useStartedAt,
     required this.useEndedAt,
     required this.useAtPending,
@@ -151,6 +153,16 @@ class _Step2ScreenState extends State<Step2Screen> {
                   ),
                   const SizedBox(height: 8),
                   FormLabel(
+                    '使用場所を記したPDFファイル',
+                    child: widget.pickedUseLocationFile != null
+                        ? AttachedFileList(
+                            fileName:
+                                p.basename(widget.pickedUseLocationFile!.name),
+                          )
+                        : const FormValue('ファイルなし'),
+                  ),
+                  const SizedBox(height: 8),
+                  FormLabel(
                     '使用予定日時',
                     child: FormValue(
                       widget.useAtPending
@@ -223,6 +235,7 @@ class _Step2ScreenState extends State<Step2Screen> {
                         companyAddress: widget.companyAddress,
                         useCompanyName: widget.useCompanyName,
                         useCompanyUserName: widget.useCompanyUserName,
+                        pickedUseLocationFile: widget.pickedUseLocationFile,
                         useStartedAt: widget.useStartedAt,
                         useEndedAt: widget.useEndedAt,
                         useAtPending: widget.useAtPending,

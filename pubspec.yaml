@@ -53,6 +53,7 @@ flutter:
 
   assets:
     - assets/fonts/
+    - assets/pdf/
 
   fonts:
     - family: SourceHanSansJP-Bold

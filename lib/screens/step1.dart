@@ -35,6 +35,7 @@ class _Step1ScreenState extends State<Step1Screen> {
   TextEditingController companyAddress = TextEditingController();
   TextEditingController useCompanyName = TextEditingController();
   TextEditingController useCompanyUserName = TextEditingController();
+  PlatformFile? pickedUseLocationFile;
   DateTime useStartedAt = DateTime.now();
   DateTime useEndedAt = DateTime.now();
   bool useAtPending = false;
@@ -225,6 +226,32 @@ class _Step1ScreenState extends State<Step1Screen> {
                   ),
                   const SizedBox(height: 8),
                   FormLabel(
+                    '使用場所を記したPDFファイル',
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomButton(
+                          type: ButtonSizeType.sm,
+                          label: 'ファイル選択',
+                          labelColor: kWhiteColor,
+                          backgroundColor: kGreyColor,
+                          onPressed: () async {
+                            final result = await FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions: ['pdf'],
+                              withData: true,
+                            );
+                            if (result == null) return;
+                            setState(() {
+                              pickedUseLocationFile = result.files.first;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  FormLabel(
                     '使用予定日時',
                     child: DatetimeRangeForm(
                       startedAt: useStartedAt,
@@ -392,6 +419,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                             companyAddress: companyAddress.text,
                             useCompanyName: useCompanyName.text,
                             useCompanyUserName: useCompanyUserName.text,
+                            pickedUseLocationFile: pickedUseLocationFile,
                             useStartedAt: useStartedAt,
                             useEndedAt: useEndedAt,
                             useAtPending: useAtPending,

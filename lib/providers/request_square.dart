@@ -40,6 +40,7 @@ class RequestSquareProvider with ChangeNotifier {
     required String companyAddress,
     required String useCompanyName,
     required String useCompanyUserName,
+    required PlatformFile? pickedUseLocationFile,
     required DateTime useStartedAt,
     required DateTime useEndedAt,
     required bool useAtPending,
@@ -60,6 +61,17 @@ class RequestSquareProvider with ChangeNotifier {
     try {
       await FirebaseAuth.instance.signInAnonymously().then((value) async {
         String id = _squareService.id();
+        String useLocationFile = '';
+        if (pickedUseLocationFile != null) {
+          storage.UploadTask uploadTask;
+          storage.Reference ref = storage.FirebaseStorage.instance
+              .ref()
+              .child('requestSquare')
+              .child('/${id}_location.pdf');
+          uploadTask = ref.putData(pickedUseLocationFile.bytes!);
+          await uploadTask.whenComplete(() => null);
+          useLocationFile = await ref.getDownloadURL();
+        }
         List<String> attachedFiles = [];
         if (pickedAttachedFiles.isNotEmpty) {
           int i = 0;
@@ -68,7 +80,7 @@ class RequestSquareProvider with ChangeNotifier {
             storage.UploadTask uploadTask;
             storage.Reference ref = storage.FirebaseStorage.instance
                 .ref()
-                .child('requestInterview')
+                .child('requestSquare')
                 .child('/${id}_$i$ext');
             uploadTask = ref.putData(file.bytes!);
             await uploadTask.whenComplete(() => null);
@@ -85,6 +97,7 @@ class RequestSquareProvider with ChangeNotifier {
           'companyAddress': companyAddress,
           'useCompanyName': useCompanyName,
           'useCompanyUserName': useCompanyUserName,
+          'useLocationFile': useLocationFile,
           'useStartedAt': useStartedAt,
           'useEndedAt': useEndedAt,
           'useAtPending': useAtPending,
@@ -147,6 +160,7 @@ class RequestSquareProvider with ChangeNotifier {
 【使用者名】$useCompanyUserName
 
 ■使用情報
+【使用場所を記したPDFファイル】$useLocationFile
 【使用予定日時】$useAtText
 【使用区分】
 $useClassText
